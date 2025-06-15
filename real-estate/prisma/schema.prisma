@@ -1,0 +1,242 @@
+// PropertyHub Real Estate Database Schema
+// Built for mobile-first property management and listings
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  phone     String?
+  avatar    String?
+  role      UserRole @default(BUYER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  agent      Agent?
+  properties Property[] @relation("UserProperties")
+  favorites  Property[] @relation("UserFavorites")
+  inquiries  Inquiry[]
+  reviews    Review[]
+
+  @@map("users")
+}
+
+model Agent {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  licenseNo   String? @unique
+  company     String?
+  bio         String?
+  specialties String? // JSON string of array
+  
+  // Contact information
+  email       String
+  phone       String
+  website     String?
+  
+  // Social media
+  linkedIn    String?
+  twitter     String?
+  facebook    String?
+  
+  // Statistics
+  totalSales  Int     @default(0)
+  avgRating   Float   @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  properties  Property[]
+  inquiries   Inquiry[]
+  reviews     Review[]   @relation("AgentReviews")
+
+  @@map("agents")
+}
+
+model Property {
+  id            String         @id @default(cuid())
+  title         String
+  description   String
+  slug          String         @unique
+  
+  // Basic info
+  price         Int
+  bedrooms      Int
+  bathrooms     Float
+  squareFootage Int
+  lotSize       Int?
+  yearBuilt     Int?
+  parkingSpaces Int?
+  
+  // Property details
+  propertyType  PropertyType
+  listingType   ListingType
+  status        PropertyStatus @default(ACTIVE)
+  features      String? // JSON string of array
+  
+  // Location
+  address       String
+  city          String
+  state         String
+  zipCode       String
+  country       String         @default("USA")
+  latitude      Float?
+  longitude     Float?
+  
+  // Media
+  images        PropertyImage[]
+  virtualTourUrl String?
+  videoUrl      String?
+  
+  // Listing info
+  listedDate    DateTime       @default(now())
+  updatedDate   DateTime       @updatedAt
+  soldDate      DateTime?
+  daysOnMarket  Int?
+  
+  // SEO and metadata
+  metaTitle     String?
+  metaDescription String?
+  
+  // Relations
+  ownerId       String?
+  agentId       String?
+  owner         User?          @relation("UserProperties", fields: [ownerId], references: [id])
+  agent         Agent?         @relation(fields: [agentId], references: [id])
+  favorites     User[]         @relation("UserFavorites")
+  inquiries     Inquiry[]
+  reviews       Review[]
+
+  @@map("properties")
+}
+
+model PropertyImage {
+  id          String   @id @default(cuid())
+  url         String
+  altText     String?
+  caption     String?
+  order       Int      @default(0)
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  propertyId  String
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  @@map("property_images")
+}
+
+model Inquiry {
+  id          String      @id @default(cuid())
+  message     String
+  inquiryType InquiryType @default(GENERAL)
+  status      InquiryStatus @default(PENDING)
+  
+  // Contact info (for non-registered users)
+  contactName  String?
+  contactEmail String?
+  contactPhone String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  userId      String?
+  propertyId  String
+  agentId     String?
+  user        User?     @relation(fields: [userId], references: [id])
+  property    Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  agent       Agent?    @relation(fields: [agentId], references: [id])
+  
+  @@map("inquiries")
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  rating      Int      // 1-5 stars
+  comment     String?
+  reviewType  ReviewType
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  userId      String
+  propertyId  String?
+  agentId     String?
+  user        User     @relation(fields: [userId], references: [id])
+  property    Property? @relation(fields: [propertyId], references: [id])
+  agent       Agent?   @relation("AgentReviews", fields: [agentId], references: [id])
+  
+  @@unique([userId, propertyId])
+  @@unique([userId, agentId])
+  @@map("reviews")
+}
+
+// Enums
+enum UserRole {
+  BUYER
+  SELLER
+  AGENT
+  ADMIN
+}
+
+enum PropertyType {
+  HOUSE
+  APARTMENT
+  CONDO
+  TOWNHOUSE
+  VILLA
+  LAND
+  COMMERCIAL
+  OFFICE
+  RETAIL
+}
+
+enum ListingType {
+  SALE
+  RENT
+  LEASE
+}
+
+enum PropertyStatus {
+  ACTIVE
+  PENDING
+  SOLD
+  RENTED
+  OFF_MARKET
+  DRAFT
+}
+
+enum InquiryType {
+  GENERAL
+  VIEWING_REQUEST
+  PRICE_INQUIRY
+  MORTGAGE_INFO
+  NEIGHBORHOOD_INFO
+}
+
+enum InquiryStatus {
+  PENDING
+  RESPONDED
+  SCHEDULED
+  COMPLETED
+  CLOSED
+}
+
+enum ReviewType {
+  PROPERTY
+  AGENT
+}

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Property } from '@/types/property';
+import { Property } from '@/lib/api';
 import { Heart, MapPin, Home, Bed, Bath, Square } from 'lucide-react';
 import { useState } from 'react';
 
