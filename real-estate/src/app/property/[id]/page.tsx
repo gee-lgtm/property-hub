@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Property } from '@/types/property';
-import { sampleProperties } from '@/data/sampleProperties';
+import { Property, PropertyService } from '@/lib/api';
 import { 
   ArrowLeft, 
   Heart, 
@@ -26,6 +25,7 @@ export default function PropertyDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const [property, setProperty] = useState<Property | null>(null);
+  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -33,10 +33,32 @@ export default function PropertyDetailsPage() {
   const [touchEnd, setTouchEnd] = useState(0);
 
   useEffect(() => {
-    const propertyId = params.id as string;
-    const foundProperty = sampleProperties.find(p => p.id === propertyId);
-    setProperty(foundProperty || null);
+    async function loadProperty() {
+      try {
+        setLoading(true);
+        const propertyId = params.id as string;
+        const foundProperty = await PropertyService.getPropertyById(propertyId);
+        setProperty(foundProperty);
+      } catch (error) {
+        console.error('Failed to load property:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProperty();
   }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading property details...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!property) {
     return (

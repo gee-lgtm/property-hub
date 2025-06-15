@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Search, Filter, X, MapPin } from 'lucide-react';
-import { PropertyFilters } from '@/types/property';
+import { PropertyFilters } from '@/lib/api';
 
 interface SearchFiltersProps {
   filters: PropertyFilters;

@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Property, PropertyFilters } from '@/types/property';
-import { sampleProperties } from '@/data/sampleProperties';
+import { useState, useEffect } from 'react';
+import { Property, PropertyFilters, PropertyService } from '@/lib/api';
 import PropertyCard from '@/components/PropertyCard';
 import SearchFilters from '@/components/SearchFilters';
 import { Home, Heart, User, Search as SearchIcon } from 'lucide-react';
 
 export default function HomePage() {
-  const [properties] = useState<Property[]>(sampleProperties);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<PropertyFilters>({
@@ -20,49 +20,26 @@ export default function HomePage() {
     location: '',
   });
 
-  // Filter properties based on search and filters
-  const filteredProperties = useMemo(() => {
-    return properties.filter((property) => {
-      // Search filter
-      if (searchQuery) {
-        const searchLower = searchQuery.toLowerCase();
-        const matchesSearch = 
-          property.title.toLowerCase().includes(searchLower) ||
-          property.address.toLowerCase().includes(searchLower) ||
-          property.city.toLowerCase().includes(searchLower) ||
-          property.state.toLowerCase().includes(searchLower);
+  // Load properties from database
+  useEffect(() => {
+    async function loadProperties() {
+      try {
+        setLoading(true);
+        const result = await PropertyService.getProperties(filters, searchQuery);
         
-        if (!matchesSearch) return false;
+        setProperties(result);
+      } catch (error) {
+        console.error('Failed to load properties:', error);
+      } finally {
+        setLoading(false);
       }
+    }
 
-      // Listing type filter
-      if (property.listingType !== filters.listingType) return false;
+    loadProperties();
+  }, [searchQuery, filters]);
 
-      // Price filter
-      if (property.price < filters.priceRange.min || property.price > filters.priceRange.max) {
-        return false;
-      }
-
-      // Bedroom filter
-      if (filters.bedrooms.length > 0) {
-        const hasMatchingBedrooms = filters.bedrooms.some(beds => property.bedrooms >= beds);
-        if (!hasMatchingBedrooms) return false;
-      }
-
-      // Bathroom filter
-      if (filters.bathrooms.length > 0) {
-        const hasMatchingBathrooms = filters.bathrooms.some(baths => property.bathrooms >= baths);
-        if (!hasMatchingBathrooms) return false;
-      }
-
-      // Property type filter
-      if (filters.propertyTypes.length > 0) {
-        if (!filters.propertyTypes.includes(property.propertyType)) return false;
-      }
-
-      return true;
-    });
-  }, [properties, searchQuery, filters]);
+  // Since filtering is now done in the database, we can use properties directly
+  const filteredProperties = properties;
 
   const handleFavorite = (propertyId: string) => {
     setFavorites(prev => 
@@ -79,6 +56,17 @@ export default function HomePage() {
   const handleFiltersChange = (newFilters: PropertyFilters) => {
     setFilters(newFilters);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading properties...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
