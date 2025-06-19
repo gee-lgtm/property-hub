@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Filter, X, MapPin } from 'lucide-react';
+import { Search, Filter, X, MapPin, Plus } from 'lucide-react';
 import { PropertyFilters } from '@/lib/api';
 
 interface SearchFiltersProps {
@@ -42,60 +42,114 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
   return (
     <div className="bg-white shadow-sm border-b sticky top-0 z-10">
       <div className="max-w-7xl mx-auto p-4">
-        {/* Search Bar, Filter Toggle and Quick Filters - Single Row */}
-        <div className="flex items-center gap-4 mb-4">
-          {/* Search Bar */}
-          <form onSubmit={handleSearchSubmit} className="flex-1 relative">
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by city, neighborhood, or address..."
-                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+        {/* Search Bar and Add Listing - Desktop: Single Row, Mobile: Search first row */}
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+          {/* First Row: Search Bar (Mobile) / Search + Filters (Desktop) */}
+          <div className="flex items-center gap-4 flex-1">
+            {/* Search Bar */}
+            <form onSubmit={handleSearchSubmit} className="flex-1 relative">
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search by city, neighborhood, or address..."
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+              </div>
+            </form>
+
+            {/* Desktop Only: Listing Type Toggle and Filter Button */}
+            <div className="hidden md:flex items-center gap-4">
+              {/* Listing Type Toggle */}
+              <div className="flex bg-gray-100 rounded-lg p-1 shrink-0">
+                <button
+                  onClick={() => handleFilterChange('listingType', 'sale')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    filters.listingType === 'sale'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Buy
+                </button>
+                <button
+                  onClick={() => handleFilterChange('listingType', 'rent')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    filters.listingType === 'rent'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Rent
+                </button>
+              </div>
+
+              {/* Filter Button */}
               <button
-                type="submit"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600"
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 shrink-0"
               >
-                <Search className="w-5 h-5" />
+                <Filter className="w-4 h-4" />
+                <span className="text-sm font-medium">Filters</span>
               </button>
             </div>
-          </form>
 
-          {/* Listing Type Toggle */}
-          <div className="flex bg-gray-100 rounded-lg p-1 shrink-0">
-            <button
-              onClick={() => handleFilterChange('listingType', 'sale')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                filters.listingType === 'sale'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Buy
-            </button>
-            <button
-              onClick={() => handleFilterChange('listingType', 'rent')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                filters.listingType === 'rent'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Rent
+            {/* Mobile Only: Add Listing Button */}
+            <button className="flex md:hidden items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0">
+              <Plus className="w-4 h-4" />
+              <span className="text-sm font-medium">Add</span>
             </button>
           </div>
 
-          {/* Filter Button */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 shrink-0"
-          >
-            <Filter className="w-4 h-4" />
-            <span className="text-sm font-medium">Filters</span>
+          {/* Desktop Only: Add Listing Button (Rightmost) */}
+          <button className="hidden md:flex items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0">
+            <Plus className="w-4 h-4" />
+            <span className="text-sm font-medium">Add Listing</span>
           </button>
+
+          {/* Mobile Only: Second Row - Listing Type Toggle and Filter Button */}
+          <div className="flex md:hidden items-center gap-4">
+            {/* Listing Type Toggle */}
+            <div className="flex bg-gray-100 rounded-lg p-1 shrink-0">
+              <button
+                onClick={() => handleFilterChange('listingType', 'sale')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  filters.listingType === 'sale'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Buy
+              </button>
+              <button
+                onClick={() => handleFilterChange('listingType', 'rent')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  filters.listingType === 'rent'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Rent
+              </button>
+            </div>
+
+            {/* Filter Button */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 shrink-0"
+            >
+              <Filter className="w-4 h-4" />
+              <span className="text-sm font-medium">Filters</span>
+            </button>
+          </div>
         </div>
 
         {/* Expanded Filters */}

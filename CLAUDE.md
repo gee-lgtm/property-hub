@@ -6,7 +6,7 @@ PropertyHub is a modern, mobile-first real estate application built with Next.js
 ## Technology Stack
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
-- **Database**: Prisma ORM with SQLite (development) / PostgreSQL (production deployed)
+- **Database**: Prisma ORM with dual environment setup - SQLite (development) / PostgreSQL (production)
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
 - **Image Optimization**: Next.js Image component with remote patterns
@@ -41,9 +41,9 @@ src/
     └── property.ts         # TypeScript interfaces
 prisma/
 ├── schema.prisma           # Database schema definition
-├── dev.db                 # SQLite database file (development)
-└── init.sql               # PostgreSQL migration schema (production)
+└── dev.db                 # SQLite database file (development)
 scripts/
+├── deploy.js              # Environment-aware database deployment script
 └── seed.ts                # Database seeding script
 deployment/
 ├── DEPLOYMENT.md          # Comprehensive deployment guide
@@ -346,21 +346,23 @@ const nextConfig: NextConfig = {
 ### Setup
 ```bash
 npm install                    # Install dependencies
-npx prisma generate           # Generate Prisma client
-npx prisma db push           # Create database schema
-npm run seed                 # Seed database with sample data
-npm run dev                  # Start development server
-npm run build                # Build for production
-npm run lint                 # Run ESLint
+node scripts/deploy.js        # Setup database environment automatically
+npm run db:seed               # Seed database with sample data
+npm run dev                   # Start development server
+npm run build                 # Build for production
+npm run lint                  # Run ESLint
 ```
 
 ### Database Commands
 ```bash
 npx prisma studio            # Open Prisma Studio (database GUI)
-npx prisma db push           # Push schema changes to database
-npx prisma generate          # Regenerate Prisma client
-npx prisma db seed           # Seed database (configured in package.json)
+node scripts/deploy.js       # Environment-aware database setup
+npm run db:seed              # Seed database with sample data
 npx prisma format            # Format schema file
+
+# Manual commands (use deploy.js instead for automatic environment handling)
+npx prisma generate          # Regenerate Prisma client
+npx prisma db push           # Push schema changes to database
 ```
 
 ### Development Server
@@ -390,6 +392,8 @@ npx prisma format            # Format schema file
 - ✅ Type-safe development with Prisma generated types
 - ✅ **Production deployment on Vercel**
 - ✅ **PostgreSQL database in production**
+- ✅ **Dual environment database configuration** 
+- ✅ **Environment-aware deployment system**
 - ✅ **Database migration and seeding completed**
 - ✅ **Comprehensive deployment documentation**
 - ✅ **Automated deployment scripts**
@@ -545,6 +549,9 @@ npm run build        # Production build
 - **🔄 CI/CD Pipeline Fix**: Updated GitHub Actions workflow for new repository structure with automatic deployment validation
 - **📱 Mobile Interface Optimization**: Removed bottom navigation for streamlined mobile experience with more screen space
 - **🔧 Production Database Fix**: Resolved Prisma schema configuration for proper PostgreSQL connection in production
+- **🔄 Dual Environment Database Setup**: Implemented seamless SQLite (development) / PostgreSQL (production) configuration with automated switching
+- **🛠️ Environment-Aware Deployment**: Created intelligent deployment script that handles database provider switching based on environment
+- **🔗 Fixed API Integration**: Resolved Prisma import path issues and database connection errors for smooth local development
 - **✅ Live Application**: PropertyHub is now fully operational with real-time property data and automated deployment pipeline
 
 This documentation covers the current state of the PropertyHub real estate application, now **live in production** with complete database integration, automated deployment pipeline, and comprehensive documentation for scalable development and deployment.
