@@ -4,8 +4,30 @@
 - [Vercel CLI](https://vercel.com/cli) installed: `npm i -g vercel`
 - Git repository connected to GitHub
 - Vercel account
+- GitHub repository: `gee-lgtm/property-hub`
 
-## Deployment Steps
+## Automatic Deployment Setup
+
+### 🚀 GitHub → Vercel Integration (Recommended)
+
+**For automatic deployments, see [GITHUB-VERCEL-SETUP.md](./GITHUB-VERCEL-SETUP.md) for detailed instructions.**
+
+Quick setup:
+1. Connect GitHub repository to Vercel
+2. Configure production branch (`main`)
+3. Set environment variables
+4. Enable automatic deployments
+
+### Benefits of Automatic Deployment:
+- ✅ **Push to main** → Automatic production deployment
+- ✅ **Pull Requests** → Preview deployments
+- ✅ **Zero downtime** deployments
+- ✅ **Rollback capability** if issues occur
+- ✅ **Build logs** and monitoring
+
+---
+
+## Manual Deployment Steps
 
 ### 1. Database Setup
 
