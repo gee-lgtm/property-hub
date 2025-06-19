@@ -74,8 +74,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      {/* Header - Desktop Only */}
+      <header className="hidden md:block bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -84,7 +84,7 @@ export default function HomePage() {
             </div>
             
             {/* Navigation - Desktop */}
-            <nav className="hidden md:flex items-center space-x-6">
+            <nav className="flex items-center space-x-6">
               <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">Buy</a>
               <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">Rent</a>
               <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">Sell</a>
