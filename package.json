@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "node scripts/deploy.js && next build",
     "start": "next start",
     "lint": "next lint",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx scripts/seed.ts",
     "db:studio": "prisma studio",
-    "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && next build"
+    "postinstall": "node scripts/deploy.js",
+    "vercel-build": "node scripts/deploy.js && next build"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",

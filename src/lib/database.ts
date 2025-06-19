@@ -1,5 +1,5 @@
 import { prisma } from './prisma';
-import { Property as PrismaProperty, PropertyImage, Agent, User } from '@/generated/prisma';
+import { Property as PrismaProperty, PropertyImage, Agent, User } from '../generated/prisma';
 
 // Types that match our existing Property interface
 export interface Property {
