@@ -162,31 +162,6 @@ export default function HomePage() {
           </div>
         )}
       </main>
-
-      {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
-        <div className="flex items-center justify-around">
-          <button className="flex flex-col items-center space-y-1 py-2 px-4 text-blue-600">
-            <Home className="w-5 h-5" />
-            <span className="text-xs font-medium">Home</span>
-          </button>
-          <button className="flex flex-col items-center space-y-1 py-2 px-4 text-gray-600">
-            <SearchIcon className="w-5 h-5" />
-            <span className="text-xs">Search</span>
-          </button>
-          <button className="flex flex-col items-center space-y-1 py-2 px-4 text-gray-600">
-            <Heart className="w-5 h-5" />
-            <span className="text-xs">Favorites</span>
-          </button>
-          <button className="flex flex-col items-center space-y-1 py-2 px-4 text-gray-600">
-            <User className="w-5 h-5" />
-            <span className="text-xs">Profile</span>
-          </button>
-        </div>
-      </nav>
-
-      {/* Add bottom padding for mobile navigation */}
-      <div className="h-16 md:hidden"></div>
     </div>
   );
 }
