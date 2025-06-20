@@ -61,7 +61,7 @@ export async function seedDatabase() {
     prisma.agent.create({
       data: {
         userId: users[0].id,
-        email: users[0].email,
+        email: users[0].email || 'agent1@example.com',
         phone: users[0].phone!,
         licenseNo: 'CA-RE-001234',
         company: 'PropertyHub Realty',
@@ -74,7 +74,7 @@ export async function seedDatabase() {
     prisma.agent.create({
       data: {
         userId: users[1].id,
-        email: users[1].email,
+        email: users[1].email || 'agent2@example.com',
         phone: users[1].phone!,
         licenseNo: 'CA-RE-005678',
         company: 'PropertyHub Realty',
@@ -87,7 +87,7 @@ export async function seedDatabase() {
     prisma.agent.create({
       data: {
         userId: users[2].id,
-        email: users[2].email,
+        email: users[2].email || 'agent3@example.com',
         phone: users[2].phone!,
         licenseNo: 'CA-RE-009012',
         company: 'PropertyHub Realty',
@@ -100,7 +100,7 @@ export async function seedDatabase() {
     prisma.agent.create({
       data: {
         userId: users[3].id,
-        email: users[3].email,
+        email: users[3].email || 'agent4@example.com',
         phone: users[3].phone!,
         licenseNo: 'CA-RE-003456',
         company: 'PropertyHub Realty',
@@ -113,7 +113,7 @@ export async function seedDatabase() {
     prisma.agent.create({
       data: {
         userId: users[4].id,
-        email: users[4].email,
+        email: users[4].email || 'agent5@example.com',
         phone: users[4].phone!,
         licenseNo: 'CA-RE-007890',
         company: 'PropertyHub Realty',

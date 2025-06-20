@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Search, Filter, X, MapPin, Plus } from 'lucide-react';
 import { PropertyFilters } from '@/lib/api';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import PhoneAuthModal from './PhoneAuthModal';
 
 interface SearchFiltersProps {
   filters: PropertyFilters;
@@ -13,6 +15,15 @@ interface SearchFiltersProps {
 export default function SearchFilters({ filters, onFiltersChange, onSearch }: SearchFiltersProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  
+  const { requireAuth, authModalProps } = useAuthGuard({
+    title: "Sign in to Add Listing",
+    subtitle: "Create an account to list your property",
+    onSuccess: () => {
+      // TODO: Navigate to add listing page or open add listing modal
+      console.log('User authenticated, ready to add listing');
+    }
+  });
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,14 +114,20 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
             </div>
 
             {/* Mobile Only: Add Listing Button */}
-            <button className="flex md:hidden items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0">
+            <button 
+              onClick={() => requireAuth()}
+              className="flex md:hidden items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0"
+            >
               <Plus className="w-4 h-4" />
               <span className="text-sm font-medium">Add</span>
             </button>
           </div>
 
           {/* Desktop Only: Add Listing Button (Rightmost) */}
-          <button className="hidden md:flex items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0">
+          <button 
+            onClick={() => requireAuth()}
+            className="hidden md:flex items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0"
+          >
             <Plus className="w-4 h-4" />
             <span className="text-sm font-medium">Add Listing</span>
           </button>
@@ -297,6 +314,9 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
           </div>
         )}
       </div>
+
+      {/* Phone Authentication Modal */}
+      <PhoneAuthModal {...authModalProps} />
     </div>
   );
 }

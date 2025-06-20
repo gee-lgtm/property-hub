@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Property } from '@/lib/api';
 import { Heart, MapPin, Home, Bed, Bath, Square } from 'lucide-react';
 import { useState } from 'react';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import PhoneAuthModal from './PhoneAuthModal';
 
 interface PropertyCardProps {
   property: Property;
@@ -16,6 +18,14 @@ export default function PropertyCard({ property, onFavorite, isFavorited = false
   const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImageLoading, setIsImageLoading] = useState(true);
+
+  const { requireAuth, authModalProps } = useAuthGuard({
+    title: "Sign in to Save Favorites",
+    subtitle: "Create an account to save your favorite properties",
+    onSuccess: () => {
+      onFavorite?.(property.id);
+    }
+  });
 
   const formatPrice = (price: number, listingType: string) => {
     if (listingType === 'rent') {
@@ -43,7 +53,7 @@ export default function PropertyCard({ property, onFavorite, isFavorited = false
   const handleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    onFavorite?.(property.id);
+    requireAuth();
   };
 
   const handleCardClick = () => {
@@ -167,6 +177,9 @@ export default function PropertyCard({ property, onFavorite, isFavorited = false
           <span className="text-sm capitalize">{property.propertyType}</span>
         </div>
       </div>
+
+      {/* Phone Authentication Modal */}
+      <PhoneAuthModal {...authModalProps} />
     </div>
   );
 }
