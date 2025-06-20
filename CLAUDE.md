@@ -7,6 +7,8 @@ PropertyHub is a modern, mobile-first real estate application built with Next.js
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
 - **Database**: Prisma ORM with dual environment setup - SQLite (development) / PostgreSQL (production)
+- **Authentication**: Custom phone-based OTP system with JWT tokens
+- **SMS Service**: Twilio integration with pluggable provider architecture
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
 - **Image Optimization**: Next.js Image component with remote patterns
@@ -17,24 +19,43 @@ PropertyHub is a modern, mobile-first real estate application built with Next.js
 src/
 ├── app/
 │   ├── api/                 # Next.js API routes
+│   │   ├── auth/            # Authentication API endpoints
+│   │   │   ├── send-otp/    # POST - Send OTP via SMS
+│   │   │   ├── verify-otp/  # POST - Verify OTP and authenticate
+│   │   │   ├── me/          # GET - Check authentication status
+│   │   │   └── logout/      # POST - Sign out user
 │   │   └── properties/
 │   │       ├── route.ts     # GET /api/properties (with filtering)
 │   │       └── [id]/
 │   │           └── route.ts # GET /api/properties/[id]
 │   ├── globals.css          # Global styles and utility classes
-│   ├── layout.tsx           # Root layout with metadata
+│   ├── layout.tsx           # Root layout with AuthProvider
 │   ├── page.tsx             # Main property listings page
 │   └── property/
 │       └── [id]/
 │           └── page.tsx     # Dynamic property details page
 ├── components/
-│   ├── PropertyCard.tsx     # Individual property listing card
-│   └── SearchFilters.tsx    # Search and filtering component
+│   ├── PropertyCard.tsx     # Individual property listing card (with auth guards)
+│   ├── SearchFilters.tsx    # Search and filtering component (with auth guards)
+│   └── PhoneAuthModal.tsx   # Phone authentication modal UI
+├── contexts/
+│   └── AuthContext.tsx      # Authentication context and provider
+├── hooks/
+│   └── useAuthGuard.ts      # Authentication guard hook
 ├── lib/
 │   ├── api.ts              # Client-side API service layer
 │   ├── database.ts         # Server-side database service
 │   ├── prisma.ts           # Prisma client configuration
-│   └── seed.ts             # Database seeding utilities
+│   ├── seed.ts             # Database seeding utilities
+│   └── sms/                # SMS service architecture
+│       ├── types.ts        # SMS provider interfaces
+│       ├── factory.ts      # Provider factory and configuration
+│       ├── providers/      # SMS provider implementations
+│       │   ├── console.ts  # Development console provider
+│       │   ├── twilio.ts   # Twilio SMS provider
+│       │   ├── vonage.ts   # Vonage provider (placeholder)
+│       │   └── messagebird.ts # MessageBird provider (placeholder)
+│       └── README.md       # SMS service documentation
 ├── data/                   # [Legacy - replaced by database]
 │   └── sampleProperties.ts # Sample property data
 └── types/                  # [Legacy - replaced by Prisma types]
@@ -56,34 +77,44 @@ deployment/
 ## Features Implemented
 
 ### ✅ Core Features
-1. **Database Integration**
+1. **Phone Number Authentication System**
+   - Custom OTP-based authentication with SMS verification
+   - JWT token management with HTTP-only cookies
+   - Pluggable SMS provider architecture (Twilio, Vonage, MessageBird)
+   - Rate limiting and security measures
+   - Authentication guards for protected features
+   - Development and production modes (console vs real SMS)
+
+2. **Database Integration**
    - Prisma ORM with comprehensive real estate schema
    - SQLite for development, PostgreSQL deployed in production
    - Database seeding with realistic property data
    - Type-safe database operations
    - Efficient querying with filtering and search
    - Production database migrated and operational
+   - Enhanced User model with phone authentication fields
 
-2. **API Architecture**
+3. **API Architecture**
    - Next.js API routes for server-side operations
    - RESTful endpoints: `/api/properties` and `/api/properties/[id]`
+   - Authentication API: `/api/auth/send-otp`, `/api/auth/verify-otp`, `/api/auth/me`, `/api/auth/logout`
    - Client-side API service layer for type safety
    - Proper separation of client/server concerns
    - Error handling and response standardization
 
-3. **Mobile-First Responsive Design**
+4. **Mobile-First Responsive Design**
    - Optimized for mobile devices with desktop support
    - Touch-friendly interface with gesture support
    - Responsive grid layouts and navigation
 
-4. **Property Listings Page**
+5. **Property Listings Page**
    - Grid layout of property cards
    - Mobile-responsive design (1-4 columns based on screen size)
    - Database-powered filtering and search functionality
    - Buy/Rent toggle
    - Streamlined interface with optimized search bar
 
-5. **Advanced Search & Filtering**
+6. **Advanced Search & Filtering**
    - Responsive search interface with Add Listing functionality
    - Location-based search with map pin icon
    - Price range filtering
@@ -94,15 +125,16 @@ deployment/
    - Clear filters functionality
    - Single-row layout with vertically centered components
    - Responsive design with optimal spacing
+   - **Authentication-protected Add Listing** button
 
-6. **Property Cards**
+7. **Property Cards**
    - Image carousels with navigation
    - Property details (price, beds, baths, sq ft)
-   - Favorite functionality
+   - **Authentication-protected Favorite functionality**
    - Click-to-view details
    - Mobile-optimized touch interactions
 
-7. **Property Details Page**
+8. **Property Details Page**
    - Full-screen image gallery with touch/swipe support
    - Comprehensive property information
    - Agent contact details
@@ -111,12 +143,14 @@ deployment/
    - Back navigation
 
 ### 🎨 UI/UX Features
+- **Phone Authentication Modal**: Responsive modal with OTP verification flow
+- **Authentication Guards**: Seamless login prompts for protected features
 - **Responsive Search Interface**: Adaptive layout with Add Listing button positioned optimally across devices
 - **Smart Mobile Layout**: Two-row mobile design (Search + Add / Filters + Buy/Rent) for better UX
 - **Desktop Optimization**: Single-row layout with Add Listing as rightmost prominent element
 - **Sticky Headers**: Search filters and navigation stay accessible
 - **Touch Gestures**: Swipe navigation for image galleries
-- **Loading States**: Image loading indicators
+- **Loading States**: Image loading indicators and SMS sending feedback
 - **Responsive Images**: Optimized for different screen sizes
 - **Professional Design**: Clean, modern interface similar to Zillow
 - **Streamlined Mobile Interface**: Removed bottom navigation for cleaner experience
@@ -130,17 +164,27 @@ The application uses a comprehensive database schema designed for real estate ap
 // Core Models
 model User {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  phone     String?
-  role      UserRole @default(USER)
+  email     String?  @unique
+  name      String?
+  phone     String?  @unique
+  role      UserRole @default(BUYER)
+  
+  // Phone authentication fields
+  phoneVerified Boolean  @default(false)
+  otpCode       String?
+  otpExpiry     DateTime?
+  otpAttempts   Int      @default(0)
+  lastOtpSent   DateTime?
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
   // Relations
-  reviews    Review[]
+  agent      Agent?
+  properties Property[] @relation("UserProperties")
+  favorites  Property[] @relation("UserFavorites")
   inquiries  Inquiry[]
-  favorites  Property[]
+  reviews    Review[]
 }
 
 model Agent {
@@ -269,6 +313,7 @@ enum InquiryStatus {
 ```
 
 ### Key Features of the Schema
+- **Phone Authentication**: Complete OTP verification system with security measures
 - **Comprehensive Relationships**: Users, Agents, Properties, Reviews, Inquiries
 - **Flexible Property Data**: Support for all major property types and listing types
 - **Image Management**: Separate table for property images with ordering
@@ -277,6 +322,7 @@ enum InquiryStatus {
 - **User Favorites**: Many-to-many relationship for saved properties
 - **Geolocation Support**: Latitude/longitude for map integration
 - **Audit Fields**: Created/updated timestamps throughout
+- **Security Features**: Rate limiting and OTP attempt tracking
 
 ## Database & Sample Data
 
@@ -314,6 +360,14 @@ The database is seeded with realistic property listings including:
 - **Complete Relationships**: All database relationships properly established
 
 ### API Endpoints
+
+#### Authentication API
+- `POST /api/auth/send-otp` - Send OTP verification code via SMS
+- `POST /api/auth/verify-otp` - Verify OTP and authenticate user
+- `GET /api/auth/me` - Check current authentication status
+- `POST /api/auth/logout` - Sign out current user
+
+#### Properties API
 - `GET /api/properties` - List properties with filtering
   - Query params: `listingType`, `minPrice`, `maxPrice`, `bedrooms`, `bathrooms`, `propertyTypes`, `location`, `search`
 - `GET /api/properties/[id]` - Get single property details
@@ -383,10 +437,15 @@ npx prisma db push           # Push schema changes to database
 
 ## Current Status - 🚀 PRODUCTION DEPLOYED
 - ✅ Project setup with Next.js 15 + TypeScript
+- ✅ **Phone number authentication system with OTP verification**
+- ✅ **Twilio SMS integration with pluggable provider architecture**
+- ✅ **JWT-based session management with HTTP-only cookies**
+- ✅ **Authentication guards for Add Listing and Favorites**
+- ✅ **Mobile-responsive authentication modal UI**
 - ✅ Database integration with Prisma ORM
-- ✅ Comprehensive database schema design
-- ✅ API routes with server-side operations
-- ✅ Client-side API service layer
+- ✅ Comprehensive database schema design with phone auth fields
+- ✅ API routes with server-side operations and authentication
+- ✅ Client-side API service layer with auth context
 - ✅ Database seeding with sample data
 - ✅ Mobile-responsive property listings
 - ✅ Advanced search and filtering (database-powered)  
@@ -408,21 +467,27 @@ npx prisma db push           # Push schema changes to database
 ### 🌐 Live Production Application
 - **URL**: https://real-estate-ibsvp7dsz-gees-projects-4245fc07.vercel.app
 - **Database**: PostgreSQL with Prisma Accelerate
-- **Status**: Fully operational with real-time property data
+- **Authentication**: Phone number OTP verification (ready for SMS)
+- **Status**: Fully operational with real-time property data and user authentication
 - **Performance**: Optimized for mobile and desktop
 - **CI/CD**: GitHub Actions pipeline with automated build validation
 - **Deployment**: Automatic via Vercel on push to main branch
 
 ## Planned Features (Roadmap)
-- [ ] User authentication system
-- [ ] User registration and login functionality
-- [ ] Property favorites and saved searches
-- [ ] Review and rating system
-- [ ] Inquiry management system
+- [x] ~~User authentication system~~ ✅ **COMPLETED** - Phone OTP authentication
+- [x] ~~User registration and login functionality~~ ✅ **COMPLETED** - SMS verification flow
+- [x] ~~Property favorites and saved searches~~ ✅ **COMPLETED** - Authentication-protected favorites
+- [ ] Add Listing form and property submission workflow
+- [ ] User profile management and settings
+- [ ] Review and rating system for properties and agents
+- [ ] Inquiry management system with real-time notifications
 - [ ] Map integration for property locations
+- [ ] Advanced SMS provider integration (Vonage, MessageBird)
+- [ ] Email notifications and communication system
 - [ ] PWA features for app-like experience
 - [ ] Custom domain setup
 - [ ] Performance monitoring and analytics
+- [ ] Admin dashboard for property and user management
 - [ ] Future: Native mobile app development
 
 ## Production Deployment Architecture
@@ -463,6 +528,13 @@ prisma generate && next build
 DATABASE_URL="prisma+postgres://accelerate.prisma-data.net/..."
 POSTGRES_URL="postgres://..."
 POSTGRES_PRISMA_URL="postgres://..."
+
+# Authentication & SMS (production)
+JWT_SECRET="production-jwt-secret-key"
+SMS_PROVIDER="twilio"
+TWILIO_ACCOUNT_SID="ACxxxxx..."
+TWILIO_AUTH_TOKEN="xxxxx..."
+TWILIO_FROM_NUMBER="+1234567890"
 
 # Deployment Commands
 npm run db:migrate    # Deploy database migrations
@@ -560,5 +632,10 @@ npm run build        # Production build
 - **📱 Enhanced Mobile UX**: Two-row mobile layout for better search and action accessibility without crowding
 - **🖥️ Desktop Layout Optimization**: Single-row desktop interface with prominent Add Listing call-to-action positioning
 - **✅ Live Application**: PropertyHub is now fully operational with real-time property data and automated deployment pipeline
+- **🔐 Phone Authentication System**: Comprehensive OTP-based authentication with SMS integration and JWT session management
+- **📱 SMS Service Integration**: Twilio SMS provider with pluggable architecture supporting future provider switching (Vonage, MessageBird)
+- **🛡️ Authentication Guards**: Protected Add Listing and Favorites features with seamless authentication flow
+- **🎨 Authentication UI**: Mobile-responsive phone auth modal with OTP verification and rate limiting
+- **🔒 Security Features**: JWT tokens, HTTP-only cookies, rate limiting, and OTP attempt tracking
 
-This documentation covers the current state of the PropertyHub real estate application, now **live in production** with complete database integration, automated deployment pipeline, and comprehensive documentation for scalable development and deployment.
+This documentation covers the current state of the PropertyHub real estate application, now **live in production** with complete database integration, phone number authentication system, SMS service integration, automated deployment pipeline, and comprehensive documentation for scalable development and deployment.
