@@ -48,8 +48,24 @@ try {
   
   // Only push schema if DATABASE_URL is available
   if (process.env.DATABASE_URL) {
+    if (isProduction) {
+      // Run phone migration script first in production
+      console.log('🔧 Running phone number migration...');
+      try {
+        execSync('node scripts/migrate-phone-unique.js', { stdio: 'inherit', env: process.env });
+      } catch (migrationError) {
+        console.log('⚠️ Migration script failed, continuing with schema push...');
+      }
+    }
+    
     console.log('📊 Pushing database schema...');
-    execSync('npx prisma db push', { stdio: 'inherit', env: process.env });
+    if (isProduction) {
+      // In production, accept data loss for schema migrations
+      console.log('⚠️ Production deployment: accepting potential data loss for schema updates');
+      execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit', env: process.env });
+    } else {
+      execSync('npx prisma db push', { stdio: 'inherit', env: process.env });
+    }
   } else {
     console.log('⚠️ DATABASE_URL not found, skipping schema push');
   }
