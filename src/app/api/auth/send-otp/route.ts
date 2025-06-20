@@ -60,16 +60,11 @@ export async function POST(request: NextRequest) {
     const smsService = getSmsService();
     const message = `Your PropertyHub verification code is: ${otpCode}. This code will expire in 10 minutes.`;
     
-    // Log SMS provider for debugging
-    console.log(`SMS Provider: ${process.env.SMS_PROVIDER || 'console'}`);
-    
     const smsResult = await smsService.sendSms(fullPhone, message);
     
     if (!smsResult.success) {
       console.error('Failed to send SMS:', smsResult.error);
       // Don't fail the request if SMS fails - user might retry
-    } else {
-      console.log('SMS sent successfully:', smsResult.messageId || 'console');
     }
 
     return NextResponse.json({
