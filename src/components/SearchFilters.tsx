@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, Filter, X, MapPin, Plus } from 'lucide-react';
 import { PropertyFilters } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import PhoneAuthModal from './PhoneAuthModal';
 
@@ -13,6 +15,8 @@ interface SearchFiltersProps {
 }
 
 export default function SearchFilters({ filters, onFiltersChange, onSearch }: SearchFiltersProps) {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   
@@ -20,10 +24,17 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
     title: "Sign in to Add Listing",
     subtitle: "Create an account to list your property",
     onSuccess: () => {
-      // TODO: Navigate to add listing page or open add listing modal
-      console.log('User authenticated, ready to add listing');
+      router.push('/add-listing');
     }
   });
+
+  const handleAddListingClick = () => {
+    if (isAuthenticated) {
+      router.push('/add-listing');
+    } else {
+      requireAuth(() => router.push('/add-listing'));
+    }
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,7 +126,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
 
             {/* Mobile Only: Add Listing Button */}
             <button 
-              onClick={() => requireAuth()}
+              onClick={handleAddListingClick}
               className="flex md:hidden items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0"
             >
               <Plus className="w-4 h-4" />
@@ -125,7 +136,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
 
           {/* Desktop Only: Add Listing Button (Rightmost) */}
           <button 
-            onClick={() => requireAuth()}
+            onClick={handleAddListingClick}
             className="hidden md:flex items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" />
