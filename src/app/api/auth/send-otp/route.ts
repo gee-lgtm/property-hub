@@ -13,9 +13,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Normalize phone number (remove non-digits and add country code if needed)
-    const normalizedPhone = phone.replace(/\D/g, '');
-    const fullPhone = normalizedPhone.startsWith('1') ? normalizedPhone : `1${normalizedPhone}`;
+    // Normalize phone number for Mongolian numbers
+    let fullPhone = phone;
+    
+    // If phone already starts with +976, keep as is
+    if (phone.startsWith('+976')) {
+      fullPhone = phone;
+    } 
+    // If phone starts with 976 (without +), add the +
+    else if (phone.replace(/\D/g, '').startsWith('976')) {
+      const cleaned = phone.replace(/\D/g, '');
+      fullPhone = `+${cleaned}`;
+    }
+    // If it's an 8-digit domestic number, add +976
+    else {
+      const cleaned = phone.replace(/\D/g, '');
+      if (cleaned.length === 8) {
+        fullPhone = `+976${cleaned}`;
+      } else {
+        return NextResponse.json(
+          { error: 'Invalid Mongolian phone number format' },
+          { status: 400 }
+        );
+      }
+    }
 
     // Check rate limiting - prevent spam (bypass in development)
     const existingUser = await prisma.user.findUnique({
