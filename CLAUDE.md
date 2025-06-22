@@ -85,11 +85,13 @@ scripts/
 ### ✅ Core Features
 1. **Phone Number Authentication System**
    - Custom OTP-based authentication with SMS verification
+   - **Mongolian phone number support** with +976 country code formatting
    - JWT token management with HTTP-only cookies
    - Pluggable SMS provider architecture (Twilio, Vonage, MessageBird)
    - Rate limiting and security measures
    - Authentication guards for protected features
    - Development and production modes (console vs real SMS)
+   - Flexible phone validation supporting both domestic (8-digit) and international (+976) formats
 
 2. **Database Integration**
    - Prisma ORM with comprehensive real estate schema
@@ -167,7 +169,8 @@ scripts/
     - **Professional organization** in dedicated property-listings folder
 
 ### 🎨 UI/UX Features
-- **Phone Authentication Modal**: Responsive modal with OTP verification flow
+- **Phone Authentication Modal**: Responsive modal with OTP verification flow optimized for Mongolian phone numbers
+- **Mongolian Phone Formatting**: Real-time formatting for both domestic (9999 1234) and international (+976 9999 1234) formats
 - **Authentication Guards**: Seamless login prompts for protected features
 - **Responsive Search Interface**: Adaptive layout with Add Listing button positioned optimally across devices
 - **Smart Mobile Layout**: Two-row mobile design (Search + Add / Filters + Buy/Rent) for better UX
@@ -500,8 +503,9 @@ npx prisma db push           # Push schema changes to database
 ### 🌐 Live Production Application
 - **URL**: https://real-estate-ibsvp7dsz-gees-projects-4245fc07.vercel.app
 - **Database**: PostgreSQL with Prisma Accelerate
-- **Authentication**: Phone number OTP verification (ready for SMS)
-- **Status**: Fully operational with real-time property data and user authentication
+- **Authentication**: Mongolian phone number OTP verification with SMS integration
+- **Target Market**: Mongolia-first deployment with +976 country code support
+- **Status**: Fully operational with real-time property data and localized authentication
 - **Performance**: Optimized for mobile and desktop
 - **CI/CD**: GitHub Actions pipeline with automated build validation
 - **Deployment**: Automatic via Vercel on push to main branch
@@ -674,9 +678,10 @@ npm run build        # Production build
 - **🖥️ Desktop Layout Optimization**: Single-row desktop interface with prominent Add Listing call-to-action positioning
 - **✅ Live Application**: PropertyHub is now fully operational with real-time property data and automated deployment pipeline
 - **🔐 Phone Authentication System**: Comprehensive OTP-based authentication with SMS integration and JWT session management
+- **🇲🇳 Mongolian Market Support**: Localized authentication system with +976 country code and flexible phone formatting
 - **📱 SMS Service Integration**: Twilio SMS provider with pluggable architecture supporting future provider switching (Vonage, MessageBird)
 - **🛡️ Authentication Guards**: Protected Add Listing and Favorites features with seamless authentication flow
-- **🎨 Authentication UI**: Mobile-responsive phone auth modal with OTP verification and rate limiting
+- **🎨 Authentication UI**: Mobile-responsive phone auth modal with OTP verification and rate limiting optimized for Mongolian numbers
 - **🔒 Security Features**: JWT tokens, HTTP-only cookies, rate limiting, and OTP attempt tracking
 - **➕ Add Listing Feature Complete**: Full-featured property listing creation with comprehensive form sections
 - **📷 Cloudinary Integration**: Production-ready image upload with automatic optimization and global CDN
@@ -692,11 +697,12 @@ This documentation covers the current state of the PropertyHub real estate appli
 
 ## 🚀 Current Capabilities
 PropertyHub now offers a **complete property listing experience** with:
-- **User Authentication**: Phone-based OTP verification with SMS integration
+- **User Authentication**: Mongolian phone-based OTP verification with SMS integration and +976 country code support
 - **Property Browsing**: Advanced search, filtering, and responsive property cards
 - **Property Creation**: Full add-listing workflow with professional photo upload
 - **Image Management**: Cloudinary integration with automatic optimization and global CDN
 - **Professional UI/UX**: Mobile-first design with enhanced visibility and consistent styling
 - **Production Ready**: Deployed on Vercel with PostgreSQL database and automated CI/CD
+- **Market Ready**: Optimized for Mongolia market with localized phone authentication
 
-The application successfully bridges the gap between property browsing and listing creation, providing a comprehensive real estate platform ready for real-world use.
+The application successfully bridges the gap between property browsing and listing creation, providing a comprehensive real estate platform ready for real-world deployment in Mongolia.

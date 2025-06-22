@@ -17,7 +17,7 @@ export default function PhoneAuthModal({
   onClose, 
   onSuccess,
   title = "Sign in with Phone",
-  subtitle = "We'll send you a verification code"
+  subtitle = "We'll send you a verification code via SMS"
 }: PhoneAuthModalProps) {
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [phone, setPhone] = useState('');
@@ -31,12 +31,28 @@ export default function PhoneAuthModal({
   if (!isOpen) return null;
 
   const formatPhoneNumber = (value: string) => {
+    // Remove all non-digits first
     const cleaned = value.replace(/\D/g, '');
-    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-      return `(${match[1]}) ${match[2]}-${match[3]}`;
+    
+    // Handle different input scenarios for Mongolian numbers
+    if (cleaned.length === 0) return '';
+    
+    // If user starts typing 976 (country code without +)
+    if (cleaned.startsWith('976')) {
+      const number = cleaned.substring(3);
+      if (number.length === 0) return '976 ';
+      if (number.length <= 4) return `976 ${number}`;
+      if (number.length <= 8) return `976 ${number.substring(0, 4)} ${number.substring(4)}`;
+      return `976 ${number.substring(0, 4)} ${number.substring(4, 8)}`;
     }
-    return value;
+    
+    // Handle 8-digit Mongolian mobile numbers (without country code)
+    if (cleaned.length <= 4) return cleaned;
+    if (cleaned.length <= 8) return `${cleaned.substring(0, 4)} ${cleaned.substring(4)}`;
+    
+    // Limit to 8 digits for domestic format
+    const truncated = cleaned.substring(0, 8);
+    return `${truncated.substring(0, 4)} ${truncated.substring(4)}`;
   };
 
   const handlePhoneSubmit = async (e: React.FormEvent) => {
@@ -44,15 +60,25 @@ export default function PhoneAuthModal({
     if (loading) return;
 
     const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length !== 10) {
-      setError('Please enter a valid 10-digit phone number');
+    
+    // Validate Mongolian phone numbers
+    let formattedPhone = '';
+    
+    if (cleanPhone.length === 8) {
+      // 8-digit domestic number, add country code
+      formattedPhone = `+976${cleanPhone}`;
+    } else if (cleanPhone.length === 11 && cleanPhone.startsWith('976')) {
+      // Full number with country code (without +)
+      formattedPhone = `+${cleanPhone}`;
+    } else {
+      setError('Please enter a valid Mongolian mobile number (8 digits or +976 followed by 8 digits)');
       return;
     }
 
     setLoading(true);
     setError('');
 
-    const result = await sendOtp(cleanPhone);
+    const result = await sendOtp(formattedPhone);
     
     if (result.success) {
       setStep('otp');
@@ -85,7 +111,20 @@ export default function PhoneAuthModal({
     setLoading(true);
     setError('');
 
-    const result = await login(phone.replace(/\D/g, ''), otp);
+    // Format the phone number the same way as in handlePhoneSubmit
+    const cleanPhone = phone.replace(/\D/g, '');
+    let formattedPhone = '';
+    
+    if (cleanPhone.length === 8) {
+      formattedPhone = `+976${cleanPhone}`;
+    } else if (cleanPhone.length === 11 && cleanPhone.startsWith('976')) {
+      formattedPhone = `+${cleanPhone}`;
+    } else {
+      // Fallback, shouldn't happen if validation worked
+      formattedPhone = phone;
+    }
+    
+    const result = await login(formattedPhone, otp);
     
     if (result.success) {
       onSuccess?.();
@@ -177,18 +216,21 @@ export default function PhoneAuthModal({
             <form onSubmit={handlePhoneSubmit} className="space-y-4">
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
+                  Mongolian Mobile Number
                 </label>
                 <input
                   type="tel"
                   id="phone"
                   value={phone}
                   onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
-                  placeholder="(555) 123-4567"
+                  placeholder="9999 1234 or 976 9999 1234"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  maxLength={14}
+                  maxLength={16}
                   required
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Enter your 8-digit mobile number or include +976 country code
+                </p>
               </div>
               <button
                 type="submit"
