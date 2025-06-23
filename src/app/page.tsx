@@ -131,7 +131,7 @@ export default function HomePage() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1">
+      <main className="flex-1 lg:overflow-hidden">
         {/* Mobile View Toggle */}
         <div className="lg:hidden px-2 py-4 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
@@ -174,7 +174,7 @@ export default function HomePage() {
         </div>
 
         {/* Desktop Split Layout */}
-        <div className="hidden lg:flex gap-3 flex-1 px-2">
+        <div className="hidden lg:flex gap-3 h-full px-2">
           {/* Left Half - Sticky Map */}
           <div className="w-1/2">
             <PropertyMap
