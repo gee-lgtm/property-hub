@@ -90,7 +90,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen lg:h-screen bg-gray-50 flex flex-col">
       {/* Header - Desktop Only */}
       <header className="hidden md:block bg-white shadow-sm border-b flex-shrink-0">
         <div className="px-2 py-4">
@@ -174,7 +174,7 @@ export default function HomePage() {
         </div>
 
         {/* Desktop Split Layout */}
-        <div className="hidden lg:flex gap-3 h-screen px-2">
+        <div className="hidden lg:flex gap-3 flex-1 px-2">
           {/* Left Half - Sticky Map */}
           <div className="w-1/2">
             <PropertyMap
@@ -250,7 +250,7 @@ export default function HomePage() {
         {/* Mobile View */}
         <div className="lg:hidden">
           {viewMode === 'map' ? (
-            <div className="h-screen">
+            <div className="h-[70vh] min-h-[500px]">
               <PropertyMap
                 properties={filteredProperties}
                 selectedPropertyId={selectedPropertyId}
