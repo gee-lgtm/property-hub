@@ -257,7 +257,7 @@ export default function HomePage() {
           ) : (
             <>
               {filteredProperties.length > 0 ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   {filteredProperties.map((property) => (
                     <PropertyCard
                       key={property.id}

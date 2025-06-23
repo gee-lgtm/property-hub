@@ -196,7 +196,7 @@ scripts/
 - **Professional Photo Upload**: Drag-and-drop interface with real-time preview and management
 - **Interactive Map Interface**: Split-screen desktop layout with synchronized property selection
 - **Optimized Mobile Map**: Toggle between list and map with full-screen map experience
-- **Compact Property Cards**: Reduced card size for 2-per-row layout optimization
+- **Optimized Property Cards**: Desktop 2-per-row, Mobile 1-per-row for better readability
 - **Full-Width Layout**: Minimal padding for maximum screen space utilization
 - **Scrollable Listings**: Independent scrolling for property lists while map stays fixed
 - **Upload Progress Feedback**: Visual indicators for photo upload and processing states
@@ -525,7 +525,7 @@ npx prisma db push           # Push schema changes to database
 - ✅ **Mobile map toggle between list and map views**
 - ✅ **Property markers with synchronized hover interactions**
 - ✅ **Mongolia-specific coordinates for all properties**
-- ✅ **Compact property cards optimized for 2-per-row layout**
+- ✅ **Optimized property cards: Desktop 2-per-row, Mobile 1-per-row**
 - ✅ **Full-width responsive layout with minimal padding**
 - ✅ **Independent scrolling for property listings**
 
