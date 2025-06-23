@@ -66,7 +66,7 @@ export default function PropertyCard({ property, onFavorite, isFavorited = false
       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
     >
       {/* Image Section */}
-      <div className="relative h-48 sm:h-56 overflow-hidden">
+      <div className="relative h-32 sm:h-40 overflow-hidden">
         <Image
           src={property.images[currentImageIndex]}
           alt={property.title}
@@ -136,45 +136,45 @@ export default function PropertyCard({ property, onFavorite, isFavorited = false
       </div>
 
       {/* Content Section */}
-      <div className="p-4">
+      <div className="p-3">
         {/* Price */}
-        <div className="text-2xl font-bold text-gray-900 mb-2">
+        <div className="text-xl font-bold text-gray-900 mb-1">
           {formatPrice(property.price, property.listingType)}
         </div>
 
         {/* Property details */}
-        <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+        <div className="flex items-center space-x-3 text-xs text-gray-600 mb-2">
           <div className="flex items-center space-x-1">
-            <Bed className="w-4 h-4" />
-            <span>{property.bedrooms} bed</span>
+            <Bed className="w-3 h-3" />
+            <span>{property.bedrooms}</span>
           </div>
           <div className="flex items-center space-x-1">
-            <Bath className="w-4 h-4" />
-            <span>{property.bathrooms} bath</span>
+            <Bath className="w-3 h-3" />
+            <span>{property.bathrooms}</span>
           </div>
           <div className="flex items-center space-x-1">
-            <Square className="w-4 h-4" />
-            <span>{property.squareFootage.toLocaleString()} sqft</span>
+            <Square className="w-3 h-3" />
+            <span>{property.squareFootage.toLocaleString()}</span>
           </div>
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
+        <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1">
           {property.title}
         </h3>
 
         {/* Address */}
-        <div className="flex items-center space-x-1 text-gray-600 mb-3">
-          <MapPin className="w-4 h-4 flex-shrink-0" />
-          <span className="text-sm line-clamp-1">
-            {property.address}, {property.city}, {property.state}
+        <div className="flex items-center space-x-1 text-gray-600 mb-2">
+          <MapPin className="w-3 h-3 flex-shrink-0" />
+          <span className="text-xs line-clamp-1">
+            {property.address}, {property.city}
           </span>
         </div>
 
         {/* Property type */}
         <div className="flex items-center space-x-1 text-gray-500">
-          <Home className="w-4 h-4" />
-          <span className="text-sm capitalize">{property.propertyType}</span>
+          <Home className="w-3 h-3" />
+          <span className="text-xs capitalize">{property.propertyType}</span>
         </div>
       </div>
 

@@ -10,6 +10,7 @@ PropertyHub is a modern, mobile-first real estate application built with Next.js
 - **Authentication**: Custom phone-based OTP system with JWT tokens
 - **SMS Service**: Vonage SMS integration with multi-provider architecture (Vonage, Twilio, Console)
 - **Image Storage**: Cloudinary integration with automatic optimization and CDN delivery
+- **Mapping**: Leaflet with OpenStreetMap integration for interactive property maps
 - **Styling**: Tailwind CSS with enhanced text visibility and consistent design
 - **Icons**: Lucide React
 - **Image Optimization**: Next.js Image component with Cloudinary and Unsplash remote patterns
@@ -41,6 +42,7 @@ src/
 │           └── page.tsx     # Dynamic property details page
 ├── components/
 │   ├── PropertyCard.tsx     # Individual property listing card (with auth guards)
+│   ├── PropertyMap.tsx      # Interactive map component with property markers
 │   ├── SearchFilters.tsx    # Search and filtering component (with auth guards)
 │   └── PhoneAuthModal.tsx   # Phone authentication modal UI
 ├── contexts/
@@ -170,6 +172,18 @@ scripts/
     - **Secure upload workflow** with authentication and validation
     - **Professional organization** in dedicated property-listings folder
 
+11. **Interactive Mapping System**
+    - **Leaflet with OpenStreetMap** - Free, no API keys required
+    - **Desktop Split Layout** - Map (left half) + property listings (right half)
+    - **Mobile Toggle View** - Switch between List and Map modes
+    - **Property Markers** - Interactive markers with property previews
+    - **Map Synchronization** - Hover on listing highlights corresponding marker
+    - **Property Popups** - Image, price, and details in map popups
+    - **Location-Based Data** - Mongolia-specific coordinates for all properties
+    - **Responsive Design** - Optimized for both mobile and desktop
+    - **Property Details Map** - Individual property location on detail pages
+    - **Dynamic Loading** - Client-side rendering to avoid SSR issues
+
 ### 🎨 UI/UX Features
 - **Phone Authentication Modal**: Responsive modal with OTP verification flow optimized for Mongolian phone numbers
 - **Mongolian Phone Formatting**: Real-time formatting for both domestic (9999 1234) and international (+976 9999 1234) formats
@@ -180,6 +194,11 @@ scripts/
 - **Enhanced Text Visibility**: Improved text and placeholder colors across all form fields
 - **Consistent Styling**: Unified design language with proper contrast and readability
 - **Professional Photo Upload**: Drag-and-drop interface with real-time preview and management
+- **Interactive Map Interface**: Split-screen desktop layout with synchronized property selection
+- **Optimized Mobile Map**: Toggle between list and map with full-screen map experience
+- **Compact Property Cards**: Reduced card size for 2-per-row layout optimization
+- **Full-Width Layout**: Minimal padding for maximum screen space utilization
+- **Scrollable Listings**: Independent scrolling for property lists while map stays fixed
 - **Upload Progress Feedback**: Visual indicators for photo upload and processing states
 - **Sticky Headers**: Search filters and navigation stay accessible
 - **Touch Gestures**: Swipe navigation for image galleries
@@ -501,6 +520,14 @@ npx prisma db push           # Push schema changes to database
 - ✅ **Professional photo upload with drag-and-drop interface**
 - ✅ **Enhanced UI/UX with improved text visibility and consistent styling**
 - ✅ **Next.js Image optimization configured for Cloudinary**
+- ✅ **Interactive mapping system with Leaflet and OpenStreetMap**
+- ✅ **Split-screen desktop layout with map and property listings**
+- ✅ **Mobile map toggle between list and map views**
+- ✅ **Property markers with synchronized hover interactions**
+- ✅ **Mongolia-specific coordinates for all properties**
+- ✅ **Compact property cards optimized for 2-per-row layout**
+- ✅ **Full-width responsive layout with minimal padding**
+- ✅ **Independent scrolling for property listings**
 
 ### 🌐 Live Production Application
 - **URL**: https://real-estate-ibsvp7dsz-gees-projects-4245fc07.vercel.app

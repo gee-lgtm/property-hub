@@ -3,7 +3,21 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { Property, PropertyService } from '@/lib/api';
+
+// Dynamically import PropertyMap to avoid SSR issues with Leaflet
+const PropertyMap = dynamic(() => import('@/components/PropertyMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="text-center text-gray-500">
+        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+        <p className="text-sm">Loading map...</p>
+      </div>
+    </div>
+  ),
+});
 import { 
   ArrowLeft, 
   Heart, 
@@ -343,6 +357,26 @@ export default function PropertyDetailsPage() {
             </div>
           </div>
         </div>
+
+        {/* Location Map */}
+        {property.coordinates && (
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">Location</h2>
+            <div className="rounded-lg overflow-hidden border border-gray-200">
+              <PropertyMap
+                properties={[property]}
+                center={[property.coordinates.lat, property.coordinates.lng]}
+                zoom={15}
+                height="300px"
+                className="w-full"
+              />
+            </div>
+            <div className="mt-3 flex items-center text-gray-600">
+              <MapPin className="w-4 h-4 mr-1" />
+              <span className="text-sm">{property.address}, {property.city}, {property.state} {property.zipCode}</span>
+            </div>
+          </div>
+        )}
 
         {/* Agent Information */}
         {property.agent && (

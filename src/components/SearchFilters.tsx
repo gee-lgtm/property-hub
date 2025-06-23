@@ -63,7 +63,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
 
   return (
     <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-      <div className="max-w-7xl mx-auto p-4">
+      <div className="px-2 py-4">
         {/* Search Bar and Add Listing - Desktop: Single Row, Mobile: Search first row */}
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           {/* First Row: Search Bar (Mobile) / Search + Filters (Desktop) */}

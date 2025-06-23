@@ -73,3 +73,22 @@ textarea::placeholder {
   color: #4b5563 !important; /* Darker gray placeholder for better visibility */
   opacity: 1 !important;
 }
+
+/* Leaflet map styles */
+.leaflet-container {
+  background: #f3f4f6;
+}
+
+.property-popup .leaflet-popup-content {
+  margin: 8px 12px;
+  min-width: 240px;
+}
+
+.property-popup .leaflet-popup-content-wrapper {
+  border-radius: 8px;
+}
+
+/* Fix for Leaflet marker icons in Next.js */
+.leaflet-default-icon-path {
+  background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png');
+}
