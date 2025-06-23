@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { Property, PropertyService } from '@/lib/api';
+import mn from '@/lib/translations';
 
 // Dynamically import PropertyMap to avoid SSR issues with Leaflet
 const PropertyMap = dynamic(() => import('@/components/PropertyMap'), {
@@ -13,7 +14,7 @@ const PropertyMap = dynamic(() => import('@/components/PropertyMap'), {
     <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
       <div className="text-center text-gray-500">
         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
-        <p className="text-sm">Loading map...</p>
+        <p className="text-sm">{mn.page.loadingMap}</p>
       </div>
     </div>
   ),
@@ -68,7 +69,7 @@ export default function PropertyDetailsPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading property details...</p>
+          <p className="text-gray-600">{mn.property.loadingPropertyDetails}</p>
         </div>
       </div>
     );
@@ -79,13 +80,13 @@ export default function PropertyDetailsPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <Home className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Property not found</h2>
-          <p className="text-gray-600 mb-4">The property you&apos;re looking for doesn&apos;t exist.</p>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">{mn.property.propertyNotFound}</h2>
+          <p className="text-gray-600 mb-4">{mn.property.propertyNotFoundDesc}</p>
           <button
             onClick={() => router.push('/')}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Back to listings
+            {mn.property.backToListings}
           </button>
         </div>
       </div>
@@ -94,9 +95,9 @@ export default function PropertyDetailsPage() {
 
   const formatPrice = (price: number, listingType: string) => {
     if (listingType === 'rent') {
-      return `$${price.toLocaleString()}/mo`;
+      return `${mn.currency.tugrik}${price.toLocaleString()}${mn.currency.perMonth}`;
     }
-    return `$${price.toLocaleString()}`;
+    return `${mn.currency.tugrik}${price.toLocaleString()}`;
   };
 
   const nextImage = () => {
@@ -248,7 +249,7 @@ export default function PropertyDetailsPage() {
               {formatPrice(property.price, property.listingType)}
             </div>
             <div className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-              For {property.listingType === 'sale' ? 'Sale' : 'Rent'}
+              {property.listingType === 'sale' ? mn.property.forSale : mn.property.forRent}
             </div>
           </div>
           
@@ -268,21 +269,21 @@ export default function PropertyDetailsPage() {
                 <Bed className="w-5 h-5 text-gray-600" />
               </div>
               <div className="text-lg font-semibold text-gray-900">{property.bedrooms}</div>
-              <div className="text-sm text-gray-600">Bedrooms</div>
+              <div className="text-sm text-gray-600">{mn.property.bedrooms}</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-1">
                 <Bath className="w-5 h-5 text-gray-600" />
               </div>
               <div className="text-lg font-semibold text-gray-900">{property.bathrooms}</div>
-              <div className="text-sm text-gray-600">Bathrooms</div>
+              <div className="text-sm text-gray-600">{mn.property.bathrooms}</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-1">
                 <Square className="w-5 h-5 text-gray-600" />
               </div>
               <div className="text-lg font-semibold text-gray-900">{property.squareFootage.toLocaleString()}</div>
-              <div className="text-sm text-gray-600">Sq Ft</div>
+              <div className="text-sm text-gray-600">{mn.property.sqft}</div>
             </div>
             {property.parkingSpaces && (
               <div className="text-center">
@@ -290,7 +291,7 @@ export default function PropertyDetailsPage() {
                   <Car className="w-5 h-5 text-gray-600" />
                 </div>
                 <div className="text-lg font-semibold text-gray-900">{property.parkingSpaces}</div>
-                <div className="text-sm text-gray-600">Parking</div>
+                <div className="text-sm text-gray-600">{mn.property.parking}</div>
               </div>
             )}
           </div>
@@ -298,7 +299,7 @@ export default function PropertyDetailsPage() {
 
         {/* Description */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Description</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">{mn.property.description}</h2>
           <div className="text-gray-700 leading-relaxed">
             {showFullDescription ? (
               <p>{property.description}</p>
@@ -310,7 +311,7 @@ export default function PropertyDetailsPage() {
                 onClick={() => setShowFullDescription(!showFullDescription)}
                 className="text-blue-600 hover:text-blue-700 font-medium mt-2"
               >
-                {showFullDescription ? 'Show less' : 'Show more'}
+                {showFullDescription ? mn.property.showLess : mn.property.showMore}
               </button>
             )}
           </div>
@@ -318,7 +319,7 @@ export default function PropertyDetailsPage() {
 
         {/* Features */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Features</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">{mn.property.features}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {property.features.map((feature, index) => (
               <div key={index} className="flex items-center space-x-2">
@@ -331,26 +332,26 @@ export default function PropertyDetailsPage() {
 
         {/* Property Details */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Property Details</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">{mn.property.propertyDetails}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex justify-between py-2 border-b border-gray-200">
-              <span className="text-gray-600">Property Type</span>
+              <span className="text-gray-600">{mn.property.propertyType}</span>
               <span className="font-medium text-gray-900 capitalize">{property.propertyType}</span>
             </div>
             {property.yearBuilt && (
               <div className="flex justify-between py-2 border-b border-gray-200">
-                <span className="text-gray-600">Year Built</span>
+                <span className="text-gray-600">{mn.property.yearBuilt}</span>
                 <span className="font-medium text-gray-900">{property.yearBuilt}</span>
               </div>
             )}
             {property.lotSize && (
               <div className="flex justify-between py-2 border-b border-gray-200">
-                <span className="text-gray-600">Lot Size</span>
+                <span className="text-gray-600">{mn.property.lotSize}</span>
                 <span className="font-medium text-gray-900">{property.lotSize.toLocaleString()} sq ft</span>
               </div>
             )}
             <div className="flex justify-between py-2 border-b border-gray-200">
-              <span className="text-gray-600">Listed Date</span>
+              <span className="text-gray-600">{mn.property.listedDate}</span>
               <span className="font-medium text-gray-900">
                 {new Date(property.listedDate).toLocaleDateString()}
               </span>
@@ -359,29 +360,27 @@ export default function PropertyDetailsPage() {
         </div>
 
         {/* Location Map */}
-        {property.coordinates && (
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Location</h2>
-            <div className="rounded-lg overflow-hidden border border-gray-200">
-              <PropertyMap
-                properties={[property]}
-                center={[property.coordinates.lat, property.coordinates.lng]}
-                zoom={15}
-                height="300px"
-                className="w-full"
-              />
-            </div>
-            <div className="mt-3 flex items-center text-gray-600">
-              <MapPin className="w-4 h-4 mr-1" />
-              <span className="text-sm">{property.address}, {property.city}, {property.state} {property.zipCode}</span>
-            </div>
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">{mn.property.location}</h2>
+          <div className="rounded-lg overflow-hidden border border-gray-200">
+            <PropertyMap
+              properties={[property]}
+              center={property.coordinates ? [property.coordinates.lat, property.coordinates.lng] : undefined}
+              zoom={15}
+              height="300px"
+              className="w-full"
+            />
           </div>
-        )}
+          <div className="mt-3 flex items-center text-gray-600">
+            <MapPin className="w-4 h-4 mr-1" />
+            <span className="text-sm">{property.address}, {property.city}, {property.state} {property.zipCode}</span>
+          </div>
+        </div>
 
         {/* Agent Information */}
         {property.agent && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Listed by</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">{mn.agent.listedBy}</h2>
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
@@ -391,7 +390,7 @@ export default function PropertyDetailsPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">{property.agent.name}</h3>
-                  <p className="text-gray-600 text-sm">Real Estate Agent</p>
+                  <p className="text-gray-600 text-sm">{mn.agent.realEstateAgent}</p>
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -400,14 +399,14 @@ export default function PropertyDetailsPage() {
                   className="flex items-center justify-center space-x-2 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <Phone className="w-4 h-4" />
-                  <span>Call</span>
+                  <span>{mn.agent.call}</span>
                 </a>
                 <a
                   href={`mailto:${property.agent.email}`}
                   className="flex items-center justify-center space-x-2 border border-blue-600 text-blue-600 py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors"
                 >
                   <Mail className="w-4 h-4" />
-                  <span>Email</span>
+                  <span>{mn.agent.email}</span>
                 </a>
               </div>
             </div>
@@ -420,11 +419,11 @@ export default function PropertyDetailsPage() {
         <div className="grid grid-cols-2 gap-3">
           <button className="flex items-center justify-center space-x-2 border border-blue-600 text-blue-600 py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors">
             <Calendar className="w-4 h-4" />
-            <span>Schedule Tour</span>
+            <span>{mn.agent.scheduleTour}</span>
           </button>
           <button className="flex items-center justify-center space-x-2 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
             <Mail className="w-4 h-4" />
-            <span>Contact Agent</span>
+            <span>{mn.agent.contactAgent}</span>
           </button>
         </div>
       </div>
