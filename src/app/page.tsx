@@ -90,7 +90,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header - Desktop Only */}
       <header className="hidden md:block bg-white shadow-sm border-b flex-shrink-0">
         <div className="px-2 py-4">
@@ -131,48 +131,50 @@ export default function HomePage() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 px-2 overflow-hidden">
+      <main className="flex-1">
         {/* Mobile View Toggle */}
-        <div className="lg:hidden mb-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-              {filters.listingType === 'sale' ? mn.page.homesForSale : mn.page.homesForRent}
-            </h2>
-            <p className="text-gray-600">
-              {filteredProperties.length} {filteredProperties.length === 1 ? mn.page.property : mn.page.properties} {mn.page.propertiesFound}
-              {searchQuery && ` "${searchQuery}"${mn.page.foundFor}`}
-            </p>
-          </div>
-          
-          {/* Mobile Toggle */}
-          <div className="flex items-center bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
-                viewMode === 'grid'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <Grid3X3 className="w-4 h-4" />
-              <span className="text-sm font-medium">{mn.view.list}</span>
-            </button>
-            <button
-              onClick={() => setViewMode('map')}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
-                viewMode === 'map'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <MapIcon className="w-4 h-4" />
-              <span className="text-sm font-medium">{mn.view.map}</span>
-            </button>
+        <div className="lg:hidden px-2 py-4 bg-white border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                {filters.listingType === 'sale' ? mn.page.homesForSale : mn.page.homesForRent}
+              </h2>
+              <p className="text-gray-600">
+                {filteredProperties.length} {filteredProperties.length === 1 ? mn.page.property : mn.page.properties} {mn.page.propertiesFound}
+                {searchQuery && ` "${searchQuery}"${mn.page.foundFor}`}
+              </p>
+            </div>
+            
+            {/* Mobile Toggle */}
+            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
+                  viewMode === 'grid'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Grid3X3 className="w-4 h-4" />
+                <span className="text-sm font-medium">{mn.view.list}</span>
+              </button>
+              <button
+                onClick={() => setViewMode('map')}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
+                  viewMode === 'map'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <MapIcon className="w-4 h-4" />
+                <span className="text-sm font-medium">{mn.view.map}</span>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Desktop Split Layout */}
-        <div className="hidden lg:flex gap-3 h-full">
+        <div className="hidden lg:flex gap-3 h-screen px-2">
           {/* Left Half - Sticky Map */}
           <div className="w-1/2">
             <PropertyMap
@@ -248,15 +250,17 @@ export default function HomePage() {
         {/* Mobile View */}
         <div className="lg:hidden">
           {viewMode === 'map' ? (
-            <PropertyMap
-              properties={filteredProperties}
-              selectedPropertyId={selectedPropertyId}
-              onPropertySelect={setSelectedPropertyId}
-              height="70vh"
-              className="min-h-[500px]"
-            />
+            <div className="h-screen">
+              <PropertyMap
+                properties={filteredProperties}
+                selectedPropertyId={selectedPropertyId}
+                onPropertySelect={setSelectedPropertyId}
+                height="100%"
+                className="h-full"
+              />
+            </div>
           ) : (
-            <>
+            <div className="px-2 py-4">
               {filteredProperties.length > 0 ? (
                 <div className="grid grid-cols-1 gap-3">
                   {filteredProperties.map((property) => (
@@ -293,7 +297,7 @@ export default function HomePage() {
                   </button>
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       </main>
