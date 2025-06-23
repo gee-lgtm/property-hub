@@ -7,6 +7,7 @@ import PropertyCard from '@/components/PropertyCard';
 import SearchFilters from '@/components/SearchFilters';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Home, Heart, User, Search as SearchIcon, Grid3X3, Map as MapIcon } from 'lucide-react';
+import mn from '@/lib/translations';
 
 // Dynamically import PropertyMap to avoid SSR issues with Leaflet
 const PropertyMap = dynamic(() => import('@/components/PropertyMap'), {
@@ -15,7 +16,7 @@ const PropertyMap = dynamic(() => import('@/components/PropertyMap'), {
     <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
       <div className="text-center text-gray-500">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-        <p className="text-sm">Loading map...</p>
+        <p className="text-sm">{mn.page.loadingMap}</p>
       </div>
     </div>
   ),
@@ -82,7 +83,7 @@ export default function HomePage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading properties...</p>
+          <p className="text-gray-600">{mn.page.loadingProperties}</p>
         </div>
       </div>
     );
@@ -96,15 +97,15 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Home className="w-8 h-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">PropertyHub</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{mn.appName}</h1>
             </div>
             
             {/* Navigation - Desktop */}
             <nav className="flex items-center space-x-6">
-              <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">Buy</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">Rent</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">Sell</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">Agents</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">{mn.nav.buy}</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">{mn.nav.rent}</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">{mn.nav.sell}</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">{mn.nav.agents}</a>
             </nav>
 
             {/* User Actions */}
@@ -135,11 +136,11 @@ export default function HomePage() {
         <div className="lg:hidden mb-6 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-              {filters.listingType === 'sale' ? 'Homes for Sale' : 'Homes for Rent'}
+              {filters.listingType === 'sale' ? mn.page.homesForSale : mn.page.homesForRent}
             </h2>
             <p className="text-gray-600">
-              {filteredProperties.length} {filteredProperties.length === 1 ? 'property' : 'properties'} found
-              {searchQuery && ` for "${searchQuery}"`}
+              {filteredProperties.length} {filteredProperties.length === 1 ? mn.page.property : mn.page.properties} {mn.page.propertiesFound}
+              {searchQuery && ` "${searchQuery}"${mn.page.foundFor}`}
             </p>
           </div>
           
@@ -154,7 +155,7 @@ export default function HomePage() {
               }`}
             >
               <Grid3X3 className="w-4 h-4" />
-              <span className="text-sm font-medium">List</span>
+              <span className="text-sm font-medium">{mn.view.list}</span>
             </button>
             <button
               onClick={() => setViewMode('map')}
@@ -165,7 +166,7 @@ export default function HomePage() {
               }`}
             >
               <MapIcon className="w-4 h-4" />
-              <span className="text-sm font-medium">Map</span>
+              <span className="text-sm font-medium">{mn.view.map}</span>
             </button>
           </div>
         </div>
@@ -188,11 +189,11 @@ export default function HomePage() {
             <div className="p-4">
               <div className="mb-4">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                  {filters.listingType === 'sale' ? 'Homes for Sale' : 'Homes for Rent'}
+                  {filters.listingType === 'sale' ? mn.page.homesForSale : mn.page.homesForRent}
                 </h2>
                 <p className="text-gray-600">
-                  {filteredProperties.length} {filteredProperties.length === 1 ? 'property' : 'properties'} found
-                  {searchQuery && ` for "${searchQuery}"`}
+                  {filteredProperties.length} {filteredProperties.length === 1 ? mn.page.property : mn.page.properties} {mn.page.propertiesFound}
+                  {searchQuery && ` "${searchQuery}"${mn.page.foundFor}`}
                 </p>
               </div>
               
@@ -218,9 +219,9 @@ export default function HomePage() {
               ) : (
                 <div className="text-center py-12">
                   <SearchIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No properties found</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{mn.page.noPropertiesFound}</h3>
                   <p className="text-gray-600 mb-4">
-                    Try adjusting your search criteria or filters to find more properties.
+                    {mn.page.tryAdjusting}
                   </p>
                   <button
                     onClick={() => {
@@ -236,7 +237,7 @@ export default function HomePage() {
                     }}
                     className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    Clear all filters
+                    {mn.page.clearAllFilters}
                   </button>
                 </div>
               )}
@@ -270,9 +271,9 @@ export default function HomePage() {
               ) : (
                 <div className="text-center py-12">
                   <SearchIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No properties found</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{mn.page.noPropertiesFound}</h3>
                   <p className="text-gray-600 mb-4">
-                    Try adjusting your search criteria or filters to find more properties.
+                    {mn.page.tryAdjusting}
                   </p>
                   <button
                     onClick={() => {
@@ -288,7 +289,7 @@ export default function HomePage() {
                     }}
                     className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    Clear all filters
+                    {mn.page.clearAllFilters}
                   </button>
                 </div>
               )}

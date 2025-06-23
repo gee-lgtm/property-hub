@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { ArrowLeft, DollarSign, Home, MapPin, Maximize, Upload, X, Image as ImageIcon } from 'lucide-react';
+import mn from '@/lib/translations';
 
 interface PropertyFormData {
   title: string;
@@ -27,16 +28,16 @@ interface PropertyFormData {
 }
 
 const PROPERTY_TYPES = [
-  { value: 'HOUSE', label: 'House' },
-  { value: 'APARTMENT', label: 'Apartment' },
-  { value: 'CONDO', label: 'Condo' },
-  { value: 'TOWNHOUSE', label: 'Townhouse' },
+  { value: 'HOUSE', label: mn.propertyTypes.house },
+  { value: 'APARTMENT', label: mn.propertyTypes.apartment },
+  { value: 'CONDO', label: mn.propertyTypes.condo },
+  { value: 'TOWNHOUSE', label: mn.propertyTypes.townhouse },
 ] as const;
 
 const FEATURES_OPTIONS = [
-  'Swimming Pool', 'Garage', 'Garden', 'Balcony', 'Fireplace', 
-  'Central Air', 'Hardwood Floors', 'Updated Kitchen', 'Walk-in Closet',
-  'Laundry Room', 'Basement', 'Deck/Patio', 'Security System', 'Gym/Fitness'
+  'Усан сан', 'Гараж', 'Цэцэрлэг', 'Тагт', 'Галын зуух', 
+  'Төв агаарын системд', 'Модон шал', 'Шинэчилсэн гал тогоо', 'Хувцасны өрөө',
+  'Угаалгын өрөө', 'Подвал', 'Дэк/Хашаа', 'Хамгаалалтын систем', 'Биеийн тамир'
 ];
 
 export default function AddListingPage() {
@@ -92,12 +93,12 @@ export default function AddListingPage() {
     const newFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
     
     if (newFiles.length === 0) {
-      alert('Please select only image files');
+      alert(mn.form.imageSelectionAlert);
       return;
     }
 
     if (uploadedFiles.length + newFiles.length > 10) {
-      alert('Maximum 10 images allowed');
+      alert(mn.form.maxPhotosAlert);
       return;
     }
 
@@ -209,11 +210,11 @@ export default function AddListingPage() {
         router.push(`/property/${property.id}`);
       } else {
         const error = await response.json();
-        alert(`Error: ${error.error || 'Failed to create listing'}`);
+        alert(`${mn.form.error}: ${error.error || mn.form.error}`);
       }
     } catch (error) {
       console.error('Submit error:', error);
-      alert('Network error. Please try again.');
+      alert(mn.form.networkErrorAlert);
     } finally {
       setIsSubmitting(false);
     }
@@ -225,7 +226,7 @@ export default function AddListingPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600">{mn.form.loading}</p>
         </div>
       </div>
     );
@@ -248,7 +249,7 @@ export default function AddListingPage() {
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-xl font-semibold text-gray-900">Add New Listing</h1>
+            <h1 className="text-xl font-semibold text-gray-900">{mn.form.addNewListing}</h1>
           </div>
         </div>
       </div>
@@ -260,27 +261,27 @@ export default function AddListingPage() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <Home className="w-5 h-5 mr-2" />
-              Basic Information
+              {mn.form.basicInformation}
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Property Title *
+                  {mn.form.propertyTitle} *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.title}
                   onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Beautiful 3-bedroom home with garden"
+                  placeholder={mn.form.propertyTitlePlaceholder}
                   className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Property Type *
+                  {mn.form.propertyType} *
                 </label>
                 <select
                   required
@@ -298,7 +299,7 @@ export default function AddListingPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Listing Type *
+                  {mn.form.listingType} *
                 </label>
                 <select
                   required
@@ -306,22 +307,22 @@ export default function AddListingPage() {
                   onChange={(e) => handleInputChange('listingType', e.target.value)}
                   className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="SALE">For Sale</option>
-                  <option value="RENT">For Rent</option>
+                  <option value="SALE">{mn.form.forSale}</option>
+                  <option value="RENT">{mn.form.forRent}</option>
                 </select>
               </div>
             </div>
 
             <div className="mt-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description *
+                {mn.form.description} *
               </label>
               <textarea
                 required
                 rows={4}
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Describe your property, its features, neighborhood, and what makes it special..."
+                placeholder={mn.form.descriptionPlaceholder}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
@@ -331,12 +332,12 @@ export default function AddListingPage() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <DollarSign className="w-5 h-5 mr-2" />
-              Pricing
+              {mn.form.pricing}
             </h2>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price ({formData.listingType === 'RENT' ? 'per month' : 'total'}) *
+                {mn.form.price} ({formData.listingType === 'RENT' ? mn.form.perMonth : mn.form.total}) *
               </label>
               <input
                 type="number"
@@ -354,13 +355,13 @@ export default function AddListingPage() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <Maximize className="w-5 h-5 mr-2" />
-              Property Details
+              {mn.form.propertyDetails}
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Bedrooms *
+                  {mn.form.bedrooms} *
                 </label>
                 <input
                   type="number"
@@ -374,7 +375,7 @@ export default function AddListingPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Bathrooms *
+                  {mn.form.bathrooms} *
                 </label>
                 <input
                   type="number"
@@ -389,7 +390,7 @@ export default function AddListingPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Square Footage *
+                  {mn.form.squareFootage} *
                 </label>
                 <input
                   type="number"
@@ -404,7 +405,7 @@ export default function AddListingPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Year Built
+                  {mn.form.yearBuiltOriginal}
                 </label>
                 <input
                   type="number"
@@ -419,7 +420,7 @@ export default function AddListingPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lot Size (sq ft)
+                  {mn.form.lotSizeOriginal}
                 </label>
                 <input
                   type="number"
@@ -433,7 +434,7 @@ export default function AddListingPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Parking Spaces
+                  {mn.form.parkingSpacesOriginal}
                 </label>
                 <input
                   type="number"
@@ -451,62 +452,62 @@ export default function AddListingPage() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <MapPin className="w-5 h-5 mr-2" />
-              Location
+              {mn.form.location}
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Street Address *
+                  {mn.form.streetAddress} *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.address}
                   onChange={(e) => handleInputChange('address', e.target.value)}
-                  placeholder="123 Main Street"
+                  placeholder={mn.form.streetAddressPlaceholder}
                   className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  City *
+                  {mn.form.city} *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.city}
                   onChange={(e) => handleInputChange('city', e.target.value)}
-                  placeholder="San Francisco"
+                  placeholder={mn.form.cityPlaceholder}
                   className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  State *
+                  {mn.form.state} *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.state}
                   onChange={(e) => handleInputChange('state', e.target.value)}
-                  placeholder="CA"
+                  placeholder={mn.form.statePlaceholderOriginal}
                   className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  ZIP Code *
+                  {mn.form.zipCodeOriginal} *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.zipCode}
                   onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                  placeholder="94103"
+                  placeholder={mn.form.zipCodePlaceholderOriginal}
                   className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -516,7 +517,7 @@ export default function AddListingPage() {
           {/* Features */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Features & Amenities
+              {mn.form.featuresAmenities}
             </h2>
             
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -540,7 +541,7 @@ export default function AddListingPage() {
           {/* Photos Section */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Photos
+              {mn.form.photosSection}
             </h2>
             
             {/* Upload Area */}
@@ -567,7 +568,7 @@ export default function AddListingPage() {
                 <Upload className="w-12 h-12 text-gray-400 mx-auto" />
                 <div>
                   <p className="text-lg font-medium text-gray-900">
-                    Drag and drop photos here
+                    {mn.form.dragDropPhotos}
                   </p>
                   <p className="text-gray-500">
                     or{' '}
@@ -576,12 +577,12 @@ export default function AddListingPage() {
                       onClick={() => fileInputRef.current?.click()}
                       className="text-blue-600 hover:text-blue-700 font-medium underline"
                     >
-                      browse files
+                      {mn.form.browseFiles}
                     </button>
                   </p>
                 </div>
                 <p className="text-sm text-gray-400">
-                  PNG, JPG, GIF up to 10MB each. Maximum 10 photos.
+                  {mn.form.photoInstructions}
                 </p>
               </div>
             </div>
@@ -590,7 +591,7 @@ export default function AddListingPage() {
             {previewUrls.length > 0 && (
               <div className="mt-6">
                 <h3 className="text-md font-medium text-gray-900 mb-3">
-                  Uploaded Photos ({previewUrls.length})
+                  {mn.form.uploadedPhotos} ({previewUrls.length})
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {previewUrls.map((url, index) => (
@@ -613,14 +614,14 @@ export default function AddListingPage() {
                       </button>
                       {index === 0 && (
                         <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                          Main Photo
+                          {mn.form.mainPhoto}
                         </div>
                       )}
                     </div>
                   ))}
                 </div>
                 <p className="text-sm text-gray-500 mt-2">
-                  The first photo will be used as the main listing image.
+                  {mn.form.firstPhotoTip}
                 </p>
               </div>
             )}
@@ -631,7 +632,7 @@ export default function AddListingPage() {
                 <div className="flex items-center">
                   <ImageIcon className="w-5 h-5 text-yellow-600 mr-2" />
                   <p className="text-sm text-yellow-800">
-                    <strong>Tip:</strong> Properties with photos get 5x more views! Add at least 3 photos for the best results.
+                    <strong>Зөвлөгөө:</strong> {mn.form.photoTip}
                   </p>
                 </div>
               </div>
@@ -645,14 +646,14 @@ export default function AddListingPage() {
               onClick={() => router.back()}
               className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              Cancel
+              {mn.form.cancel}
             </button>
             <button
               type="submit"
               disabled={isSubmitting || isUploading}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {isUploading ? 'Uploading Photos...' : isSubmitting ? 'Creating Listing...' : 'Create Listing'}
+              {isUploading ? mn.form.uploadingPhotos : isSubmitting ? mn.form.creatingListing : mn.form.createListing}
             </button>
           </div>
         </form>

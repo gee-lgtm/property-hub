@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { X, Phone, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import mn from '@/lib/translations';
 
 interface PhoneAuthModalProps {
   isOpen: boolean;
@@ -16,8 +17,8 @@ export default function PhoneAuthModal({
   isOpen, 
   onClose, 
   onSuccess,
-  title = "Sign in with Phone",
-  subtitle = "We'll send you a verification code via SMS"
+  title = mn.auth.signInWithPhone,
+  subtitle = mn.auth.createAccount
 }: PhoneAuthModalProps) {
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [phone, setPhone] = useState('');
@@ -71,7 +72,7 @@ export default function PhoneAuthModal({
       // Full number with country code (without +)
       formattedPhone = `+${cleanPhone}`;
     } else {
-      setError('Please enter a valid Mongolian mobile number (8 digits or +976 followed by 8 digits)');
+      setError(mn.auth.invalidPhoneNumber);
       return;
     }
 
@@ -93,7 +94,7 @@ export default function PhoneAuthModal({
         });
       }, 1000);
     } else {
-      setError(result.error || 'Failed to send verification code');
+      setError(result.error || mn.auth.failedToSend);
     }
     
     setLoading(false);
@@ -104,7 +105,7 @@ export default function PhoneAuthModal({
     if (loading) return;
 
     if (otp.length !== 6) {
-      setError('Please enter the 6-digit verification code');
+      setError(mn.auth.enterSixDigitCode);
       return;
     }
 
@@ -131,7 +132,7 @@ export default function PhoneAuthModal({
       onClose();
       resetForm();
     } else {
-      setError(result.error || 'Invalid verification code');
+      setError(result.error || mn.auth.invalidCode);
     }
     
     setLoading(false);
@@ -170,7 +171,7 @@ export default function PhoneAuthModal({
         });
       }, 1000);
     } else {
-      setError(result.error || 'Failed to resend code');
+      setError(result.error || mn.auth.failedToResend);
     }
     
     setLoading(false);
@@ -189,10 +190,10 @@ export default function PhoneAuthModal({
             )}
             <div>
               <h2 className="text-xl font-semibold text-gray-900">
-                {step === 'phone' ? title : 'Enter Verification Code'}
+                {step === 'phone' ? title : mn.auth.enterVerificationCode}
               </h2>
               <p className="text-sm text-gray-600">
-                {step === 'phone' ? subtitle : `Sent to ${formatPhoneNumber(phone)}`}
+                {step === 'phone' ? subtitle : `${mn.auth.sentTo} ${formatPhoneNumber(phone)}`}
               </p>
             </div>
           </div>
@@ -216,20 +217,20 @@ export default function PhoneAuthModal({
             <form onSubmit={handlePhoneSubmit} className="space-y-4">
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                  Mongolian Mobile Number
+                  {mn.auth.mongolianMobileNumber}
                 </label>
                 <input
                   type="tel"
                   id="phone"
                   value={phone}
                   onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
-                  placeholder="9999 1234 or 976 9999 1234"
+                  placeholder={mn.auth.phonePlaceholder}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   maxLength={16}
                   required
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Enter your 8-digit mobile number or include +976 country code
+                  {mn.auth.phoneHelper}
                 </p>
               </div>
               <button
@@ -237,14 +238,14 @@ export default function PhoneAuthModal({
                 disabled={loading}
                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Sending...' : 'Send Verification Code'}
+                {loading ? mn.auth.sending : mn.auth.sendVerificationCode}
               </button>
             </form>
           ) : (
             <form onSubmit={handleOtpSubmit} className="space-y-4">
               <div>
                 <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-2">
-                  Verification Code
+                  {mn.auth.verificationCode}
                 </label>
                 <input
                   type="text"
@@ -263,7 +264,7 @@ export default function PhoneAuthModal({
                 disabled={loading}
                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Verifying...' : 'Verify Code'}
+                {loading ? mn.auth.verifying : mn.auth.verifyCode}
               </button>
 
               <div className="text-center">
@@ -273,7 +274,7 @@ export default function PhoneAuthModal({
                   disabled={countdown > 0}
                   className="text-sm text-blue-600 hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
-                  {countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code'}
+                  {countdown > 0 ? `${mn.auth.resendIn} ${countdown}${mn.auth.seconds}` : mn.auth.resendCode}
                 </button>
               </div>
 
@@ -283,7 +284,7 @@ export default function PhoneAuthModal({
                   onClick={() => setStep('phone')}
                   className="text-sm text-gray-600 hover:text-gray-800"
                 >
-                  Change Phone Number
+                  {mn.auth.changePhoneNumber}
                 </button>
               </div>
             </form>

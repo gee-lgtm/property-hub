@@ -7,6 +7,7 @@ import { Heart, MapPin, Home, Bed, Bath, Square } from 'lucide-react';
 import { useState } from 'react';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import PhoneAuthModal from './PhoneAuthModal';
+import mn from '@/lib/translations';
 
 interface PropertyCardProps {
   property: Property;
@@ -20,8 +21,8 @@ export default function PropertyCard({ property, onFavorite, isFavorited = false
   const [isImageLoading, setIsImageLoading] = useState(true);
 
   const { requireAuth, authModalProps } = useAuthGuard({
-    title: "Sign in to Save Favorites",
-    subtitle: "Create an account to save your favorite properties",
+    title: mn.auth.signInToSave,
+    subtitle: mn.auth.createAccount,
     onSuccess: () => {
       onFavorite?.(property.id);
     }
@@ -29,9 +30,9 @@ export default function PropertyCard({ property, onFavorite, isFavorited = false
 
   const formatPrice = (price: number, listingType: string) => {
     if (listingType === 'rent') {
-      return `$${price.toLocaleString()}/mo`;
+      return `${mn.currency.tugrik}${price.toLocaleString()}${mn.currency.perMonth}`;
     }
-    return `$${price.toLocaleString()}`;
+    return `${mn.currency.tugrik}${price.toLocaleString()}`;
   };
 
   const handleNextImage = (e: React.MouseEvent) => {
@@ -131,7 +132,7 @@ export default function PropertyCard({ property, onFavorite, isFavorited = false
 
         {/* Property type badge */}
         <div className="absolute top-3 left-3 bg-blue-600 text-white text-xs font-medium px-2 py-1 rounded-full">
-          {property.listingType === 'rent' ? 'For Rent' : 'For Sale'}
+          {property.listingType === 'rent' ? mn.property.forRent : mn.property.forSale}
         </div>
       </div>
 

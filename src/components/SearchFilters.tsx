@@ -7,6 +7,7 @@ import { PropertyFilters } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import PhoneAuthModal from './PhoneAuthModal';
+import mn from '@/lib/translations';
 
 interface SearchFiltersProps {
   filters: PropertyFilters;
@@ -21,8 +22,8 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
   const [showFilters, setShowFilters] = useState(false);
   
   const { requireAuth, authModalProps } = useAuthGuard({
-    title: "Sign in to Add Listing",
-    subtitle: "Create an account to list your property",
+    title: mn.auth.signInToAddListing,
+    subtitle: mn.auth.createAccountToList,
     onSuccess: () => {
       router.push('/add-listing');
     }
@@ -76,7 +77,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by city, neighborhood, or address..."
+                  placeholder={mn.search.searchPlaceholder}
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <button
@@ -100,7 +101,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  Buy
+                  {mn.search.buy}
                 </button>
                 <button
                   onClick={() => handleFilterChange('listingType', 'rent')}
@@ -110,7 +111,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  Rent
+                  {mn.search.rent}
                 </button>
               </div>
 
@@ -120,7 +121,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
                 className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 shrink-0"
               >
                 <Filter className="w-4 h-4" />
-                <span className="text-sm font-medium">Filters</span>
+                <span className="text-sm font-medium">{mn.search.filters}</span>
               </button>
             </div>
 
@@ -140,7 +141,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
             className="hidden md:flex items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" />
-            <span className="text-sm font-medium">Add Listing</span>
+            <span className="text-sm font-medium">{mn.search.addListing}</span>
           </button>
 
           {/* Mobile Only: Second Row - Listing Type Toggle and Filter Button */}
@@ -155,7 +156,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                Buy
+                {mn.search.buy}
               </button>
               <button
                 onClick={() => handleFilterChange('listingType', 'rent')}
@@ -165,7 +166,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                Rent
+                {mn.search.rent}
               </button>
             </div>
 
@@ -175,7 +176,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
               className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 shrink-0"
             >
               <Filter className="w-4 h-4" />
-              <span className="text-sm font-medium">Filters</span>
+              <span className="text-sm font-medium">{mn.search.filters}</span>
             </button>
           </div>
         </div>
@@ -184,7 +185,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
         {showFilters && (
           <div className="bg-gray-50 rounded-lg p-4 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Filters</h3>
+              <h3 className="text-lg font-semibold">{mn.search.filters}</h3>
               <button
                 onClick={() => setShowFilters(false)}
                 className="text-gray-500 hover:text-gray-700"
@@ -201,7 +202,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
               <div className="grid grid-cols-2 gap-4">
                 <input
                   type="number"
-                  placeholder="Min price"
+                  placeholder={mn.search.minPrice}
                   value={filters.priceRange.min || ''}
                   onChange={(e) =>
                     handleFilterChange('priceRange', {
@@ -213,7 +214,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
                 />
                 <input
                   type="number"
-                  placeholder="Max price"
+                  placeholder={mn.search.maxPrice}
                   value={filters.priceRange.max === 10000000 ? '' : filters.priceRange.max}
                   onChange={(e) =>
                     handleFilterChange('priceRange', {
@@ -313,7 +314,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch }: Se
                 onClick={clearFilters}
                 className="text-sm text-gray-600 hover:text-gray-900"
               >
-                Clear all filters
+                {mn.search.clearFilters}
               </button>
               <button
                 onClick={() => setShowFilters(false)}

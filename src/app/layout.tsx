@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PropertyHub - Find Your Dream Home",
-  description: "Discover and explore properties with our mobile-first real estate platform. Find homes, apartments, and commercial properties near you.",
+  title: "ОронСуурь - Мөрөөдлийн гэрээ олоорой",
+  description: "Манай гар утасны үеийн үл хөдлөх хөрөнгийн платформоор орон сууцнуудыг нээж үзээрэй. Ойролцоох байшин, орон сууц, арилжааны талбайнуудыг олоорой.",
 };
 
 export default function RootLayout({
